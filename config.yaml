@@ -21,8 +21,3 @@ routes:
     ecs: 14.153.0.0/24
     count: 2
 
-  - name: more
-    domain: ctcc.cloudflare.seeck.cn
-    dns: 8.8.8.8
-    ecs: 14.153.0.0/24
-    count: 2
