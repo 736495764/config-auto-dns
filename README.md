@@ -1,1 +1,1 @@
-# config-auto-dns
+none
