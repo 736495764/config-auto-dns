@@ -13,10 +13,10 @@ routes:
     domain: ct.877774.xyz
     dns: 8.8.8.8
     ecs: 14.153.0.0/24
-    count: 3
+    count: 2
 
   - name: qms_na
     domain: na.877774.xyz
     dns: 8.8.8.8
     ecs: 14.153.0.0/24
-    count: 3
+    count: 2
