@@ -1,0 +1,34 @@
+name: Resolve Cloudflare IPs
+
+on:
+  workflow_dispatch:          # 只保留手动/外部触发（第三方 cron 会调用这个）
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install dnspython pyyaml
+
+      - name: Run resolution
+        run: python resolve_ip.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add ips-* ips-all.txt
+          git diff --staged --quiet || git commit -m "update ips $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
