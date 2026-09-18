@@ -29,14 +29,14 @@ def resolve_ips(domain: str, dns_server: str, ecs_subnet: str) -> list[str]:
         return []
 
 def process_route(route: dict, time_str: str) -> list[str]:
-    """处理单路，返回用于 ips-all 的行列表"""
+    """处理单路，返回用于 ips-all.txt 的行"""
     name = route["name"]
     domain = route["domain"]
     dns_server = route["dns"]
     ecs = route["ecs"]
     count = int(route.get("count", 2))
 
-    output_file = Path(f"ips-{name}")
+    output_file = Path(f"ips-{name}.txt")   # 强制带 .txt 后缀
 
     print(f"\n===== 处理通路: {name} =====")
     print(f"域名: {domain} | DNS: {dns_server} | ECS: {ecs} | 需要数量: {count}")
@@ -44,14 +44,15 @@ def process_route(route: dict, time_str: str) -> list[str]:
     ips = resolve_ips(domain, dns_server, ecs)
     print(f"实际解析到 {len(ips)} 个 IP: {ips}")
 
-    # ---------- 处理单路结果文件 ----------
+    # ---------- 单路结果文件 ----------
     if not ips:
+        # 失败或 0 个 IP：只写一行保底
         content = f"{domain}#{domain}@{time_str}\n"
         output_file.write_text(content, encoding="utf-8")
         print(f"失败，已写入保底内容到 {output_file}")
-        # 给 all 文件用的保底
-        all_lines = [f"# {domain}", f"{domain}#{domain}@{time_str}"]
-        return all_lines
+
+        # 给汇总文件用
+        return [f"# {domain}", f"{domain}#{domain}@{time_str}"]
 
     # 成功：按 count 限制写入单路文件
     selected = ips[:count]
@@ -60,7 +61,7 @@ def process_route(route: dict, time_str: str) -> list[str]:
     output_file.write_text(content, encoding="utf-8")
     print(f"成功，已写入 {len(selected)} 个 IP 到 {output_file}")
 
-    # 给 all 文件用的：不受 count 限制，全部写入
+    # 汇总文件：不受 count 限制，写全部 IP
     all_lines = [f"# {domain}"]
     all_lines.extend([f"{ip}#{ip}@{time_str}" for ip in ips])
     return all_lines
@@ -87,7 +88,7 @@ def main():
     for route in routes:
         route_lines = process_route(route, time_str)
         all_content_lines.extend(route_lines)
-        all_content_lines.append("")  # 通路之间空一行，更清晰
+        all_content_lines.append("")  # 通路之间空一行
 
     # 写入汇总文件
     all_content = "\n".join(all_content_lines).rstrip() + "\n"
