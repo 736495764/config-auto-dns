@@ -19,7 +19,7 @@ routes:
     dns: 8.8.8.8
     ecs: 14.153.0.0/24
     count: 2
-    output: "ips-qms_na.list"
+    output: "ips-qms_na.txt"
     fallback: "104.19.74.233#104.19.74.233@替补"
 
   # 继续添加更多通道即可
