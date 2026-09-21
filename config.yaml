@@ -25,7 +25,7 @@ routes:
     fallback: "104.19.74.233#替补"
 
   - name: visa
-    enable: true
+    enable: false
     domain: www.visa.cn
     dns: 8.8.8.8
     ecs: 14.153.0.0/24
