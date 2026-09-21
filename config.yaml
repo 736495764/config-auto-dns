@@ -25,9 +25,9 @@ routes:
     fallback: "104.19.74.233#替补"
 
   - name: visa
-    enable: false
+    enable: true
     domain: www.visa.cn
-    dns: 8.8.8.8
+    dns: 223.5.5.5
     ecs: 14.153.0.0/24
     count: 2
     output: "ips-visa_cn.txt"
