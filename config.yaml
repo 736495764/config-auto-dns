@@ -1,5 +1,6 @@
 # ==================== 全局配置 ====================
-all_output: "ips-all.txt"
+all_output: "ips-all.txt"              # 全量结果（不受 count 限制）
+limited_output: "ips-limited.txt"      # 受 count 限制的全局结果（新增）
 
 # ==================== 通道配置 ====================
 routes:
