@@ -40,6 +40,7 @@ def process_route(route: dict, time_str: str) -> list[str]:
     ecs = route["ecs"]
     count = int(route.get("count", 2))
     output_name = route["output"]
+    placeholder = route.get("placeholder", "emoji")          # 新增：读取占位符
     fallback = route.get("fallback", f"{domain}#{domain}@{time_str}")
 
     output_file = Path(output_name)
@@ -50,7 +51,8 @@ def process_route(route: dict, time_str: str) -> list[str]:
         return []
 
     print(f"域名: {domain} | DNS: {dns_server} | ECS: {ecs} | 数量限制: {count}")
-    print(f"输出文件: {output_file} | 替补字段: {fallback}")
+    print(f"输出文件: {output_file} | 占位符: {placeholder}")
+    print(f"替补字段: {fallback}")
 
     ips = resolve_ips(domain, dns_server, ecs)
     print(f"实际解析到 {len(ips)} 个 IP: {ips}")
@@ -60,19 +62,18 @@ def process_route(route: dict, time_str: str) -> list[str]:
         # 失败或 0 个 IP：只写一行替补内容
         output_file.write_text(fallback + "\n", encoding="utf-8")
         print(f"失败，已写入替补内容到 {output_file}")
-        # 全部结果文件用
         return [f"#{name}", fallback]
 
-    # 成功：按 count 限制写入
+    # 成功：按 count 限制写入（使用配置的 placeholder）
     selected = ips[:count]
-    lines = [f"{ip}#emoji {ip}@{time_str}" for ip in selected]
+    lines = [f"{ip}#{placeholder} {ip}@{time_str}" for ip in selected]
     content = "\n".join(lines) + "\n"
     output_file.write_text(content, encoding="utf-8")
     print(f"成功，已写入 {len(selected)} 个 IP 到 {output_file}")
 
     # 全部结果文件：不受 count 限制，写全部 IP
     all_lines = [f"#{name}"]
-    all_lines.extend([f"{ip}#emoji {ip}@{time_str}" for ip in ips])
+    all_lines.extend([f"{ip}#{placeholder} {ip}@{time_str}" for ip in ips])
     return all_lines
 
 def main():
@@ -99,7 +100,7 @@ def main():
 
     for route in routes:
         route_lines = process_route(route, time_str)
-        if route_lines:  # 只添加开启的通道
+        if route_lines:
             all_content_lines.extend(route_lines)
             all_content_lines.append("")  # 通道之间空一行
 
