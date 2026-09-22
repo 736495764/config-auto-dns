@@ -1,14 +1,18 @@
 # ==================== 全局配置 ====================
 all_output: "ips-all.txt"              # 全量结果（不受 count 限制）
 limited_output: "ips-limited.txt"      # 受 count 限制的结果
-
+# ==================== 使用说明 ====================
+# 8.8.8.8&ecs=14.153.0.0/24      # 带 ECS
+# 1.1.1.1                        # 不带 ECS
 # ==================== 通道配置 ====================
 routes:
   - name: qms_ct
     enable: true
     domain: ct.877774.xyz
-    dns: 8.8.8.8
-    ecs: 14.153.0.0/24                 # 需要 ECS 就填写，不需要就留空或删除此行
+    dns:
+      - 8.8.8.8&ecs=14.153.0.0/24
+      - 1.1.1.1&ecs=14.153.0.0/24
+      - 223.5.5.5&ecs=14.153.0.0/24
     count: 2
     placeholder: "🗺️ qms电信"
     fallback: "172.64.229.44#替补"
@@ -16,17 +20,23 @@ routes:
   - name: qms_na
     enable: true
     domain: na.877774.xyz
-    dns: 8.8.8.8
-    ecs: 14.153.0.0/24
+    dns:
+      - 8.8.8.8&ecs=14.153.0.0/24
+      - 1.1.1.1&ecs=14.153.0.0/24
+      - 223.5.5.5&ecs=14.153.0.0/24
     count: 2
     placeholder: "🗺️ qms美洲"
     fallback: "104.19.74.233#替补"
 
   - name: test-1
     enable: true
-    domain: ahrefs.com
-    dns: 8.8.8.8
-    ecs: 14.153.0.0/24
-    count: 3
+    domain: cfyx.aliyun.20237737.xyz
+    dns:
+      - 8.8.8.8&ecs=14.153.0.0/24
+      - 1.1.1.1&ecs=14.153.0.0/24
+      - 223.5.5.5&ecs=14.153.0.0/24
+    count: 5
     placeholder: "✨ test-1"
     fallback: "104.19.74.233#替补"
+
+    
