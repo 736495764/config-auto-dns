@@ -28,7 +28,7 @@ routes:
     enable: true
     domain: cfyx.aliyun.20237737.xyz
     dns: 8.8.8.8
-    ecs: 14.153.0.0/24
+    ecs: 
     count: 3
     output: "test-1.txt"
     placeholder: "✨ test-1"
