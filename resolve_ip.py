@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import yaml
+from collections import OrderedDict
 
 CONFIG_FILE = Path("config.yaml")
 
@@ -13,60 +14,89 @@ def get_beijing_time() -> str:
     now = datetime.now(ZoneInfo("Asia/Shanghai"))
     return now.strftime("%m%d·%H%M")
 
-def resolve_ips(domain: str, dns_server: str, ecs_subnet: str | None) -> list[str]:
+def parse_dns_entry(entry: str) -> tuple[str, str | None]:
     """
-    增强版解析：
-    - 支持 ECS 留空（不发送 ECS）
-    - 增大 EDNS 缓冲区
-    - UDP 失败或结果异常时自动用 TCP 重试
+    解析 DNS 条目
+    支持：
+      - 8.8.8.8
+      - 8.8.8.8&ecs=14.153.0.0/24
+    返回 (dns_server, ecs_subnet 或 None)
     """
+    entry = str(entry).strip()
+    if "&ecs=" in entry:
+        server, ecs = entry.split("&ecs=", 1)
+        server = server.strip()
+        ecs = ecs.strip()
+        return server, ecs if ecs else None
+    return entry, None
+
+def resolve_one(domain: str, dns_server: str, ecs_subnet: str | None) -> list[str]:
+    """向单个 DNS 解析，支持可选 ECS + TCP 回退"""
     resolver = dns.resolver.Resolver(configure=False)
     resolver.nameservers = [dns_server]
     resolver.timeout = 5
-    resolver.lifetime = 12
+    resolver.lifetime = 10
 
-    # 处理 ECS
     options = []
-    if ecs_subnet and str(ecs_subnet).strip():
+    if ecs_subnet:
         try:
-            ecs = dns.edns.ECSOption.from_text(str(ecs_subnet).strip())
-            options.append(ecs)
+            options.append(dns.edns.ECSOption.from_text(ecs_subnet))
         except Exception as e:
-            print(f"[{domain}] ECS 配置无效 ({ecs_subnet})，将不使用 ECS: {e}")
+            print(f"  [{dns_server}] ECS 无效 ({ecs_subnet})，忽略: {e}")
 
     try:
-        # 增大 payload，减少截断
         resolver.use_edns(edns=True, options=options if options else None, payload=1232)
 
-        # 先尝试 UDP
+        # 先 UDP
         try:
             answer = resolver.resolve(domain, "A")
             ips = [rdata.address for rdata in answer]
             if ips:
                 return ips
         except Exception as e:
-            print(f"[{domain}] UDP 解析异常，尝试 TCP: {type(e).__name__}: {e}")
+            print(f"  [{dns_server}] UDP 失败，尝试 TCP: {type(e).__name__}")
 
-        # UDP 失败或无结果，强制 TCP
+        # TCP 回退
         answer = resolver.resolve(domain, "A", tcp=True)
         return [rdata.address for rdata in answer]
 
     except Exception as e:
-        print(f"[{domain}] 解析失败: {type(e).__name__}: {e}")
+        print(f"  [{dns_server}] 解析失败: {type(e).__name__}: {e}")
         return []
+
+def resolve_ips(domain: str, dns_list: list) -> list[str]:
+    """
+    多 DNS 解析并合并去重（保持先出现的顺序）
+    """
+    # 兼容旧写法：dns 直接写字符串
+    if isinstance(dns_list, str):
+        dns_list = [dns_list]
+
+    all_ips = OrderedDict()  # 用 OrderedDict 去重并保序
+
+    for entry in dns_list:
+        server, ecs = parse_dns_entry(entry)
+        ecs_info = f" + ECS {ecs}" if ecs else " (无ECS)"
+        print(f"  查询 {server}{ecs_info} ...")
+
+        ips = resolve_one(domain, server, ecs)
+        print(f"    → 得到 {len(ips)} 个: {ips}")
+
+        for ip in ips:
+            if ip not in all_ips:
+                all_ips[ip] = None
+
+    return list(all_ips.keys())
 
 def process_route(route: dict, time_str: str):
     """
     处理单个通道
-    返回两个列表：
-    - all_lines: 全量结果（不受 count 限制）
-    - limited_lines: 受 count 限制的结果
+    返回 (all_lines, limited_lines)
     """
     name = route["name"]
     enable = route.get("enable", True)
-    domain = str(route["domain"]).strip()          # 自动去除首尾空格
-    dns_server = route.get("dns", "8.8.8.8")
-    ecs = route.get("ecs")                         # 可以为空
+    domain = str(route["domain"]).strip()
+    dns_list = route.get("dns", ["8.8.8.8"])
     count = int(route.get("count", 2))
     placeholder = route.get("placeholder", "emoji")
     fallback = route.get("fallback", f"{domain}#{domain}@{time_str}")
@@ -77,28 +107,25 @@ def process_route(route: dict, time_str: str):
         return [], []
 
     print(f"域名: {domain}")
-    print(f"DNS: {dns_server} | ECS: {ecs if ecs else '无（不使用ECS）'} | count: {count}")
-    print(f"占位符: {placeholder}")
+    print(f"count: {count} | 占位符: {placeholder}")
     print(f"替补字段: {fallback}")
 
-    ips = resolve_ips(domain, dns_server, ecs)
-    print(f"实际解析到 {len(ips)} 个 IP: {ips}")
+    ips = resolve_ips(domain, dns_list)
+    print(f"合并去重后共 {len(ips)} 个 IP: {ips}")
 
     if not ips:
-        # 失败：使用替补
         print("解析失败或 0 个 IP，使用替补字段")
         all_lines = [f"#{name}", fallback]
         limited_lines = [f"#{name}", fallback]
         return all_lines, limited_lines
 
-    # 成功
-    selected = ips[:count]   # 受 count 限制
+    selected = ips[:count]
 
-    # 全量结果（不受 count 限制）
+    # 全量（不受 count 限制）
     all_lines = [f"#{name}"]
     all_lines.extend([f"{ip}#{placeholder} {ip}@{time_str}" for ip in ips])
 
-    # 受 count 限制的结果
+    # 受 count 限制
     limited_lines = [f"#{name}"]
     limited_lines.extend([f"{ip}#{placeholder} {ip}@{time_str}" for ip in selected])
 
@@ -134,21 +161,19 @@ def main():
         all_lines, limited_lines = process_route(route, time_str)
         if all_lines:
             all_content_lines.extend(all_lines)
-            all_content_lines.append("")          # 通道之间空一行
+            all_content_lines.append("")
 
             limited_content_lines.extend(limited_lines)
             limited_content_lines.append("")
 
-    # 写入全量结果文件
+    # 写入全量结果
     all_file = Path(all_output_name)
-    all_content = "\n".join(all_content_lines).rstrip() + "\n"
-    all_file.write_text(all_content, encoding="utf-8")
+    all_file.write_text("\n".join(all_content_lines).rstrip() + "\n", encoding="utf-8")
     print(f"\n已生成全量结果文件: {all_file}")
 
-    # 写入受 count 限制的结果文件
+    # 写入受限制结果
     limited_file = Path(limited_output_name)
-    limited_content = "\n".join(limited_content_lines).rstrip() + "\n"
-    limited_file.write_text(limited_content, encoding="utf-8")
+    limited_file.write_text("\n".join(limited_content_lines).rstrip() + "\n", encoding="utf-8")
     print(f"已生成受限制结果文件: {limited_file}")
 
     print("\n全部处理完成")
