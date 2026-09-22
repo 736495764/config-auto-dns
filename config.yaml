@@ -24,12 +24,12 @@ routes:
     placeholder: "🗺️ qms美洲"
     fallback: "104.19.74.233#替补"
 
-  - name: visa
-    enable: false
-    domain: www.visa.cn
-    dns: 223.5.5.5
+  - name: test-1
+    enable: true
+    domain: cfyx.aliyun.20237737.xyz 
+    dns: 8.8.8.8
     ecs: 14.153.0.0/24
-    count: 2
-    output: "ips-visa_cn.txt"
-    placeholder: "🗺️ visa.cn"
+    count: 3
+    output: "test-1.txt"
+    placeholder: "✨ test-1"
     fallback: "104.19.74.233#替补"
