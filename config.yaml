@@ -32,7 +32,7 @@ routes:
     placeholder: "🗺️ qms美洲"
     fallback: "104.19.74.233#替补"
 
-  - name: test-1
+  - name: hutao
     enable: true
     domain: cfvip.cf.3666888.xyz
     dns:
@@ -53,7 +53,7 @@ routes:
       - 4.2.2.1
       - 80.80.80.80
     count: 5
-    placeholder: "✨ test-1"
+    placeholder: "✨ hutao"
     fallback: "104.19.74.233#替补"
 
     
