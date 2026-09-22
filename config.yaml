@@ -34,7 +34,7 @@ routes:
 
   - name: test-1
     enable: true
-    domain: ahrefs.com
+    domain: cfvip.cf.3666888.xyz
     dns:
       - 8.8.8.8&ecs=14.152.0.0/24
       - 1.1.1.1&ecs=14.153.0.0/24
