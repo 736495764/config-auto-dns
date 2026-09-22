@@ -24,9 +24,8 @@ routes:
 
   - name: test-1
     enable: true
-    domain: cfyx.aliyun.20237737.xyz
+    domain: ahrefs.com
     dns: 8.8.8.8
-    ecs: ""                            # 示例：留空表示不使用 ECS
     count: 3
     placeholder: "✨ test-1"
     fallback: "104.19.74.233#替补"
