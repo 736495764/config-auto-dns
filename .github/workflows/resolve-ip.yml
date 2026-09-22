@@ -1,7 +1,7 @@
 name: Resolve Cloudflare IPs
 
 on:
-  workflow_dispatch:          # 由第三方 cron 触发
+  workflow_dispatch:
 
 jobs:
   resolve:
@@ -29,7 +29,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 添加所有可能的结果文件（根据 config.yaml 中定义的名称）
+          git add ips-all.txt ips-limited.txt
+          # 如果文件名被自定义，也兼容添加所有可能的结果文件
           git add .
           git diff --staged --quiet || git commit -m "update ips $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
