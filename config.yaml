@@ -40,9 +40,9 @@ output:
         enable: true
         type: http
         url: "https://bestcf.pages.dev/wetest/ipv4.txt"
-        filter: "(?i)^(?=.*(lax|us|美国))(?!.*(bestcf|ipv6)).*$"
+        filter: "(?i)^(?=.*(hk|香港|hongkong))(?!.*(bestcf|ipv6)).*$"
         count: 4
-        additional-prefix: "🍩 微测-us-"
+        additional-prefix: "🍩 微测-hk|"
         additional-suffix: "|test-a"
         fallback: "104.17.110.199#⚠️ 后备|test-a"
 
@@ -54,6 +54,6 @@ output:
         url: "https://raw.githubusercontent.com/Senflare/Senflare-IP/refs/heads/main/Senflare-Pro.txt"
         filter: "(?i)^(?=.*(lax|us|美国))(?!.*(bestcf|ipv6)).*$"
         count: 4
-        additional-prefix: "🌵 Senflare-us-"
+        additional-prefix: "🌵 Senflare-us|"
         additional-suffix: "|test-b"
         fallback: "104.16.103.103#⚠️ 后备|test-b"
