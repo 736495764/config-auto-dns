@@ -1,10 +1,3 @@
-下面是一份可直接用作仓库 `README.md` 的说明文档。
-
----
-
-```markdown
-# config-auto-dns
-
 基于 GitHub Actions 的多通道 IP 自动解析 / 拉取工具。
 
 支持：
