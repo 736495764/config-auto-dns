@@ -40,7 +40,7 @@ output:
         enable: true
         type: http
         url: "https://bestcf.pages.dev/wetest/ipv4.txt"
-        filter: "(?i)^(?=.*(lax|us))(?!.*(联通|移动|bestcf|ipv6)).*$"
+        filter: "(?i)^(?=.*(lax|us|美国))(?!.*(联通|移动|bestcf|ipv6)).*$"
         count: 6
         additional-prefix: "🗺️微测-us-"
         additional-suffix: "|test-a"
@@ -48,12 +48,12 @@ output:
 
   "test-b.txt":
     routes:
-      - name: "vvhan"
+      - name: "Senflare"
         enable: true
         type: http
-        url: "https://bestcf.pages.dev/vvhan/ipv4.txt"
-        filter: "(?i)^(?=.*(lax|us))(?!.*(联通|移动|bestcf|ipv6)).*$"
+        url: "https://raw.githubusercontent.com/Senflare/Senflare-IP/refs/heads/main/Senflare-Pro.txt"
+        filter: "(?i)^(?=.*(lax|us|美国))(?!.*(联通|移动|bestcf|ipv6)).*$"
         count: 6
-        additional-prefix: "🗺️vvhan-us-"
+        additional-prefix: "🗺️Senflare-us-"
         additional-suffix: "|test-b"
         fallback: "104.16.103.103#⚠️后备"
