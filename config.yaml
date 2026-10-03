@@ -47,6 +47,7 @@ output:
         fallback: "104.16.103.103#⚠️ 后备|senflare@us"
 
   "tiancheng@us.txt":
+    routes:
       - name: "天成"
         enable: true
         type: http
