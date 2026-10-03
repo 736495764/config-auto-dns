@@ -34,14 +34,25 @@ output:
         additional-suffix: ""
         fallback: "104.19.74.233#⚠️ 后备|qms美洲"
 
-  "us.txt":
+  "senflare@us.txt":
     routes:
       - name: "senflare"
         enable: true
         type: http
         url: "https://raw.githubusercontent.com/Senflare/Senflare-IP/refs/heads/main/Senflare-Pro.txt"
         filter: "(?i)^(?=.*(lax|us|美国))(?!.*(bestcf|ipv6)).*$"
-        count: 4
-        additional-prefix: "🌵 senflare@us|"
+        count: 3
+        additional-prefix: "🌷 senflare@us|"
         additional-suffix: ""
         fallback: "104.16.103.103#⚠️ 后备|senflare@us"
+
+  "tiancheng@us.txt":
+      - name: "天成"
+        enable: true
+        type: http
+        url: "https://bestcf.pages.dev/tiancheng/us.txt"
+        filter: "(?i)^(?=.*(lax|us|美国))(?!.*(bestcf|ipv6)).*$"
+        count: 3
+        additional-prefix: "💧 天成@us|"
+        additional-suffix: ""
+        fallback: "104.18.33.93#⚠️ 后备|天成@us"
