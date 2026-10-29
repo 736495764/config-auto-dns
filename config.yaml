@@ -44,10 +44,10 @@ output:
 
   "d.txt":
     routes:
-      - name: "tiancheng@sg"
+      - name: "sg"
         enable: true
         type: http
-        url: "https://bestcf.pages.dev/tiancheng/all.txt"
+        url: "https://bestcf.pages.dev/lzj/all.txt"
         filter: "(?i)^(?=.*(sg|加|坡))(?!.*(bestcf|ipv6)).*$"
         count: 4
         additional-prefix: "Ⓓ"
