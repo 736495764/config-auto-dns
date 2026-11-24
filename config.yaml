@@ -20,36 +20,42 @@ output:
 
   "b.txt":
     routes:
-      - name: "tiancheng@us"
+      - name: "wetest"
         enable: true
         type: http
-        url: "https://bestcf.pages.dev/tiancheng/all.txt"
+        url: "https://bestcf.pages.dev/wetest/ipv4.txt"
         filter: "(?i)^(?=.*(jp|日))(?!.*(bestcf|ipv6)).*$"
-        count: 4
+        count: 2
         additional-prefix: "Ⓑ"
         additional-suffix: ""
-        fallback: "172.64.229.222#Ⓑ后备"
-
-  "c.txt":
-    routes:
-      - name: "tiancheng@jp"
+        fallback: "104.18.40.65#Ⓑ后备"
+        
+      - name: "uouin"
         enable: true
         type: http
-        url: "https://bestcf.pages.dev/tiancheng/all.txt"
+        url: "https://bestcf.pages.dev/uouin/all.txt"
         filter: "(?i)^(?=.*(jp|日))(?!.*(bestcf|ipv6)).*$"
-        count: 4
-        additional-prefix: "Ⓒ"
+        count: 2
+        additional-prefix: "Ⓑ"
         additional-suffix: ""
-        fallback: "52.197.210.248#Ⓒ后备"
+        fallback: "104.18.40.65#Ⓑ后备"
 
-  "d.txt":
-    routes:
-      - name: "sg"
+      - name: "cfyes"
         enable: true
         type: http
-        url: "https://bestcf.pages.dev/lzj/all.txt"
-        filter: "(?i)^(?=.*(sg|加|坡))(?!.*(bestcf|ipv6)).*$"
-        count: 4
-        additional-prefix: "Ⓓ"
+        url: "https://bestcf.pages.dev/cfyes/ipv4.txt"
+        filter: "(?i)^(?=.*(jp|日))(?!.*(bestcf|ipv6)).*$"
+        count: 2
+        additional-prefix: "Ⓑ"
         additional-suffix: ""
-        fallback: "140.235.11.170#Ⓓ后备"
+        fallback: "104.18.40.65#Ⓑ后备"
+
+      - name: "vvhan"
+        enable: true
+        type: http
+        url: "https://bestcf.pages.dev/vvhan/ipv4.txt"
+        filter: "(?i)^(?=.*(jp|日))(?!.*(bestcf|ipv6)).*$"
+        count: 2
+        additional-prefix: "Ⓑ"
+        additional-suffix: ""
+        fallback: "104.18.40.65#Ⓑ后备"
